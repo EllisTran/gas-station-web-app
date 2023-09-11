@@ -38,8 +38,8 @@
       </div>
 
     </div>
-
   </div>
+    <loader-icon v-if="isLoading"></loader-icon>
 </template>
 
 <script>
@@ -49,7 +49,8 @@ export default {
       cities: [],
       states: [],
       cityToSearch: '',
-      activeScreen: 'prices-among-states' // key for pages
+      activeScreen: 'prices-among-states', // key for pages,
+      isLoading: false,
     }
   },
   methods: {
@@ -58,20 +59,24 @@ export default {
 
     },
     async getGasDataForCitiesInState() {
+      this.isLoading = true;
       await fetch(`https://api.collectapi.com/gasPrice/stateUsaPrice?state=${this.cityToSearch}`, {
         headers: {
           "Content-type": "application/json",
           "authorization": "apikey 4T56yIcfcwAQ1oTigoZ5a6:4hcmA0s2a8smtj57yWToh4"
         }
-      }).then(response => response.json()).then(result => { this.cities.push(...result.result.cities); console.log(result) });
+      }).then(response => response.json()).then(result => this.cities.push(...result.result.cities)).finally(() => this.isLoading = false);
     },
     async getGasDataForUSAStates() {
+      // this.isLoading = true;
       // await fetch(`https://api.collectapi.com/gasPrice/allUsaPrice`, {
       //   headers: {
       //     "Content-type": "application/json",
       //     "authorization": "apikey 4T56yIcfcwAQ1oTigoZ5a6:4hcmA0s2a8smtj57yWToh4"
       //   }
-      // }).then(response => response.json()).then(result => { this.states.push(...result.result); console.log(result.result) });
+      // }).then(response => response.json()).then(result => { this.states.push(...result.result); console.log(result.result) }).catch((error) => {
+      //   console.error(error);
+      // }).finally(() => this.isLoading = false);
       const mockData = [{
         name: "Alaska",
         currency: "usd",
@@ -174,4 +179,10 @@ body {
   margin: 0;
   height: 100%;
   background-color: #F5F5F5;
-}</style>
+
+
+
+
+}
+
+</style>
